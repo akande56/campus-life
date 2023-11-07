@@ -1,0 +1,12 @@
+site_name: campus life
+site_description: ATBU campus life project
+repo_url: https://github.com/ATBU/campus life
+site_dir: site
+copyright: Copyright &copy; 2020, <a href="https://github.com/ATBU">ATBU</a>.
+dev_addr: 0.0.0.0:8001
+
+nav:
+  - Home: 'index.md'
+  - API:
+    - Authentication: 'api/authentication.md'
+    - Users: 'api/users.md'
