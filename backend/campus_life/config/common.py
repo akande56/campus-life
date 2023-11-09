@@ -22,8 +22,9 @@ class Common(Configuration):
         'rest_framework.authtoken',  # token authentication
         'django_filters',            # for filtering rest endpoints
 
+
         # Your apps
-        'campus life.users',
+        'campus_life.users',
 
     )
 
@@ -39,9 +40,9 @@ class Common(Configuration):
     )
 
     ALLOWED_HOSTS = ["*"]
-    ROOT_URLCONF = 'campus life.urls'
+    ROOT_URLCONF = 'campus_life.urls'
     SECRET_KEY = 'flkjoi9u54jlkj54lkj65k6jkjlkj'
-    WSGI_APPLICATION = 'campus life.wsgi.application'
+    WSGI_APPLICATION = 'campus_life.wsgi.application'
 
     # Email
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

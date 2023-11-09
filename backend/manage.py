@@ -5,7 +5,7 @@ import sys
 
 
 def main():
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "campus life.config")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "campus_life.config")
     os.environ.setdefault("DJANGO_CONFIGURATION", "Local")
 
     try:

@@ -16,7 +16,7 @@ class Local(Common):
         '--nologcapture',
         '--with-coverage',
         '--with-progressive',
-        '--cover-package=campus life'
+        '--cover-package=campus_life'
     ]
 
     # Mail

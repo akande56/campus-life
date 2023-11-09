@@ -5,7 +5,7 @@ Supports registering, viewing, and updating user accounts.
 
 **Request**:
 
-`POST` `/users/`
+`POST` `api/v1/users/`
 
 Parameters:
 
@@ -45,7 +45,7 @@ authenticating future requests to the API. See [Authentication](authentication.m
 
 **Request**:
 
-`GET` `/users/:id`
+`GET` `api/v1/users/id/`
 
 Parameters:
 
@@ -73,7 +73,7 @@ Content-Type application/json
 
 **Request**:
 
-`PUT/PATCH` `/users/:id`
+`PUT/PATCH` `api/v1/users/id/`
 
 Parameters:
 
@@ -104,3 +104,14 @@ Content-Type application/json
   "email": "richard@piedpiper.com",
 }
 ```
+
+
+## User login
+`POST` `api-auth/login`
+
+parameters:
+
+Name       | Type   | Description
+-----------|--------|---
+username   | string | The user's username on singup/registration.
+password   | straing| user's password
