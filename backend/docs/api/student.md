@@ -2,7 +2,7 @@
 
 ## 1. Verify and Create User
 The view handles creation of both new user and student. it uses information gotten from the school database to populate student data.
-**Note: username is email included in the request, while reg_number is the password** 
+**Note: email will be saved as username for the User object, while reg_number will be saved as password for the User object... thus what is needed in subsequest login** 
 Upon success Token will be generated for the user for future login and other authentication request.
 
 `Endpoint: api/v1/student/verify_and_create_user/`
@@ -408,42 +408,189 @@ http GET http://localhost:8000/api/v1/student/faculties/ "Authorization: Token y
 ]
 
 ## 15. Department List
-Endpoint: /departments/
+`Endpoint: api/v1/student/departments/`
 Method: GET
 Description: Retrieve a list of departments.
 Token Header Required: Yes
-16. Course List
-Endpoint: /courses/
+
+**Request**
+http GET http://localhost:8000/api/v1/student/departments/ "Authorization: Token your_token_here"
+**Response**
+[
+    {
+        "id": 1,
+        "name": "Computer Science",
+        "faculty": 1
+    },
+    {
+        "id": 2,
+        "name": "Mechanical Engineering",
+        "faculty": 1
+    }
+]
+
+## 16. Course List
+`Endpoint: api/v1/student/courses/`
 Method: GET
 Description: Retrieve a list of courses.
 Token Header Required: Yes
-17. All Students
-Endpoint: /all/
+
+**Request**
+http GET http://localhost:8000/api/v1/student/courses/ "Authorization: Token your_token_here"
+
+**Response**
+[
+    {
+        "id": 1,
+        "name": "Computer Science",
+        "department": 1
+    },
+    {
+        "id": 2,
+        "name": "Software Engineering",
+        "department": 1
+    }
+]
+
+## 17. All Students
+`Endpoint: api/v1/student/all/`
 Method: GET
 Description: Retrieve a list of all students.
 Token Header Required: Yes
-18. Faculty Students
-Endpoint: /faculty/<int:faculty_id>/
+**Request**
+http GET http://localhost:8000/api/v1/student/all/ "Authorization: Token your_token_here"
+
+**Response**
+[
+    {
+        "id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "reg_number": "12345",
+        "current_level": "500",
+        "course": "Computer Science",
+        "faculty": "Engineering",
+        "department": "Computer Science",
+        "session": "2022/2023",
+        "user_id": "user_id_here"
+    },
+    {
+        "id": 2,
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@example.com",
+        "reg_number": "54321",
+        "current_level": "500",
+        "course": "Electrical Engineering",
+        "faculty": "Engineering",
+        "department": "Electrical Engineering",
+        "session": "2022/2023",
+        "user_id": "another_user_id"
+    }
+]
+
+## 18. Faculty Students
+`Endpoint: api/v1/student/faculty/<int:faculty_id>/`
 Method: GET
 Description: Retrieve a list of students for a specific faculty.
 Parameters:
 faculty_id (integer): ID of the faculty.
 Token Header Required: Yes
-19. Department Students
-Endpoint: /department/<int:department_id>/
+**Request**
+http GET http://localhost:8000/api/v1/student/faculty/1/ "Authorization: Token your_token_here"
+**Response**
+[
+    {
+        "id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "reg_number": "12345",
+        "current_level": "500",
+        "course": "Computer Science",
+        "faculty": "Engineering",
+        "department": "Computer Science",
+        "session": "2022/2023",
+        "user_id": "user_id_here"
+    },
+    {
+        "id": 3,
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "email": "alice.smith@example.com",
+        "reg_number": "98765",
+        "current_level": "500",
+        "course": "Mechanical Engineering",
+        "faculty": "Engineering",
+        "department": "Mechanical Engineering",
+        "session": "2022/2023",
+        "user_id": "another_user_id"
+    }
+]
+
+## 19. Department Students
+Endpoint: api/v1/student/department/<int:department_id>/
 Method: GET
 Description: Retrieve a list of students for a specific department.
 Parameters:
 department_id (integer): ID of the department.
 Token Header Required: Yes
-20. Course Students
-Endpoint: /course/<int:course_id>/
+**Request**
+http GET http://localhost:8000/api/v1/student/department/1/ "Authorization: Token your_token_here"
+**Response**
+[
+    {
+        "id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "reg_number": "12345",
+        "current_level": "500",
+        "course": "Computer Science",
+        "faculty": "Engineering",
+        "department": "Computer Science",
+        "session": "2022/2023",
+        "user_id": "user_id_here"
+    },
+    {
+        "id": 3,
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "email": "alice.smith@example.com",
+        "reg_number": "98765",
+        "current_level": "500",
+        "course": "Mechanical Engineering",*
+        "faculty": "Engineering",
+        "department": "Mechanical Engineering",
+        "session": "2022/2023",
+        "user_id": "another_user_id"
+    }
+]
+
+## 20. Course Students
+Endpoint: api/v1/student/course/<int:course_id>/
 Method: GET
 Description: Retrieve a list of students for a specific course.
 Parameters:
 course_id (integer): ID of the course.
 Token Header Required: Yes
-21. Level Students
+
+**Request**
+http GET http://localhost:8000/api/v1/student/course/1/ "Authorization: Token your_token_here"
+**Response**
+[
+    {
+        "id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "reg_number": "12345",
+        "current_level": "500",
+        "course": "Computer Science",
+       
+
+## 21. Level Students
 Endpoint: /level/<int:course_id>/<str:level>/
 Method: GET
 Description: Retrieve a list of students for a specific course and level.
