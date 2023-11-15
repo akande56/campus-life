@@ -1,7 +1,7 @@
 # Users
 Supports registering, viewing, and updating user accounts.
 
-## Register a new user account
+## Register a new user account (this is no longer neccessary, since validation and registration of student is not authomatic)
 
 **Request**:
 
@@ -107,7 +107,7 @@ Content-Type application/json
 
 
 ## User login
-`POST` `api-auth/login`
+`POST` `api-token-auth/ username='' password=''`
 
 parameters:
 
@@ -115,3 +115,11 @@ Name       | Type   | Description
 -----------|--------|---
 username   | string | The user's username on singup/registration.
 password   | straing| user's password
+
+
+
+## User logout
+The logout operation in Django REST Framework typically involves removing or invalidating the authentication token. However, since the authentication token management is usually handled on the client-side, there isn't a direct logout endpoint in Django REST Framework.
+
+Typically, you'd clear the token from the client-side storage (like local storage or cookies) to achieve a logout effect. 
+

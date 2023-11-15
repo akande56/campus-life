@@ -25,6 +25,7 @@ class Common(Configuration):
 
         # Your apps
         'campus_life.users',
+        'student',
 
     )
 
