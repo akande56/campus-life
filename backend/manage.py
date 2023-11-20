@@ -3,12 +3,12 @@
 import os
 import sys
 
-
 def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "campus_life.config")
     os.environ.setdefault("DJANGO_CONFIGURATION", "Local")
 
     try:
+        # Set the configuration before importing configurations
         from configurations.management import execute_from_command_line
     except ImportError:
         # The above import may fail for some other reason. Ensure that the
@@ -24,7 +24,6 @@ def main():
             )
         raise
     execute_from_command_line(sys.argv)
-
 
 if __name__ == '__main__':
     main()
