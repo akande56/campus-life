@@ -23,6 +23,7 @@ from .views import (
     CourseListView,
 )
 
+
 urlpatterns = [
     #student
     path('verify_and_create_user/', verify_and_create_user, name='verify_and_create_user'),
@@ -49,4 +50,5 @@ urlpatterns = [
     path('department/<int:department_id>/', department_students, name='department-students'),
     path('course/<int:course_id>/', course_students, name='course-students'),
     path('level/<int:course_id>/<str:level>/', level_students, name='level-students'),   
+
 ]

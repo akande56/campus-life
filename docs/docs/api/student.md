@@ -185,7 +185,7 @@ http GET http://localhost:8000/api/v1/student/user_id_here/experiences/ "Authori
 ## 8. Get Session Experiences
 `Endpoint: api/v1/student/session/<int:session_id>/experiences/`
 Method: GET
-Description: Retrieve experiences for a specific session.
+Description: Retrieve the list of experiences for the current user in a specific session.
 Parameters:
 session_id (integer): ID of the session.
 Token Header Required: Yes
@@ -214,7 +214,7 @@ http GET http://localhost:8000/api/v1/student/session/1/experiences/ "Authorizat
 ## 9. Get Semester Experiences
 `Endpoint: api/v1/student/semester/<int:semester_id>/experiences/`
 Method: GET
-Description: Retrieve experiences for a specific semester.
+Description: Retrieve the list of experiences for the current user in a specific semester.
 Parameters:
 semester_id (integer): ID of the semester.
 Token Header Required: Yes

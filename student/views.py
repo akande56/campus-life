@@ -13,7 +13,7 @@ from rest_framework.permissions import (
     AllowAny, 
     IsAuthenticated,
 )
-
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from compus_life.users.models import User
 
 from .models import (
@@ -39,7 +39,17 @@ from .serializers import (
     CourseSerializer,
 )
 
-
+@extend_schema(
+     description=" Note: Execution may lead to error when running here in the docs(Due to Swagger UI or ReDoc); everything is working when actual running with\
+      httpie and curl.The view handles creation of both new user (User Object) and student (Student Object). It uses information gotten from the school database.\
+         to populate student data. \ Note: email will be saved as username, while reg_number will be saved as password \
+        for the User object... thus what is needed in subsequent login. After login, a token will be generated which needs to be saved in the client browser\
+        for future authentication. During authentication, if the token has expired, the user needs to log in again to obtain a new token.",
+    parameters=[
+        OpenApiParameter(name="email", type=str, description="Student email."),
+        OpenApiParameter(name='reg_number', type=str, description='student school registration number')
+    ],
+)
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication])  # Exempting authentication for this view
 @permission_classes([AllowAny])  # Allowing any permission for this view
@@ -112,7 +122,21 @@ def verify_and_create_user(request):
     else:
         return Response("Student verification failed", status=status.HTTP_400_BAD_REQUEST)
 
+#...................................................................................................
 
+@extend_schema(
+    description="Retrieve details of a specific student.",
+    parameters=[
+        {
+            "name": "id",
+            "required": True,
+            "in": "path",
+            "description": "The ID of the student to retrieve.",
+            "type": "integer",
+        }
+    ],
+    responses={200: StudentSerializer},
+)
 class StudentDetailView(RetrieveAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
@@ -126,7 +150,22 @@ class StudentDetailView(RetrieveAPIView):
         except Student.DoesNotExist:
             raise Http404("Student not found")
 
+#......................................................................
 
+@extend_schema(
+    description="Update details of a specific student.",
+    parameters=[
+        {
+            "name": "user_id",
+            "required": True,
+            "in": "path",
+            "description": "The user ID of the student to update.",
+            "type": "string",
+        }
+    ],
+    request=StudentSerializer,
+    responses={200: StudentSerializer},
+)
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -142,7 +181,7 @@ def update_student(request, user_id):
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
 
-
+#...................................................................
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])  # Ensure user authentication
@@ -152,6 +191,7 @@ def sessions_list_view(request):
     serializer = SessionSerializer(sessions, many=True)
     return Response(serializer.data)
 
+#...................................................................
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -161,7 +201,22 @@ def semesters_list_view(request, session_id):
     serializer = SemesterSerializer(semesters, many=True)
     return Response(serializer.data)
 
+#...................................................................
 
+@extend_schema(
+    description="Create a new experience for a specific semester and student. NOTE: dont forget to add multipart or form in the request",
+    parameters=[
+        {
+            "name": "semester_id",
+            "required": True,
+            "in": "path",
+            "description": "The ID of the semester for which the experience is created.",
+            "type": "integer",
+        }
+    ],
+    request=ExperienceSerializer,
+    responses={201: ExperienceSerializer, 400: "Bad Request"},
+)
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -188,7 +243,13 @@ def semester_experience(request, semester_id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+#.....................................................................
 
+@extend_schema(
+    description="Retrieve the list of experiences for a specific student.",
+    
+    responses={200: ExperienceSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication])  # Exempting authentication for this view
 @permission_classes([AllowAny])  # Allowing any permission for this view
@@ -197,29 +258,69 @@ def get_student_experiences(request, user_id):
     serializer = ExperienceSerializer(experiences, many=True)
     return Response(serializer.data)
 
+#........................................................................
 
+@extend_schema(
+    description="Retrieve the list of experiences for the current user in a specific session.",
+    parameters=[OpenApiParameter(name="session_id", type=int, description="ID of the session.")],
+    responses={200: ExperienceSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_session_experiences(request, session_id):
-    experiences = Experience.objects.filter(semester__session_id=session_id)
+    user = request.user  # Get the current authenticated user
+
+    try:
+        session = Session.objects.get(id=session_id)
+    except Session.DoesNotExist:
+        return Response("Session not found", status=status.HTTP_404_NOT_FOUND)
+
+    student = Student.objects.get(user=user)
+
+    # Filter experiences based on the user and session
+    experiences = Experience.objects.filter(semester__session=session, student=student)
     serializer = ExperienceSerializer(experiences, many=True)
-    return Response(serializer.data)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# ........................................................................
+
+@extend_schema(
+    description="Retrieve the list of experiences for the current user in a specific semester.",
+    parameters=[OpenApiParameter(name="semester_id", type=int, description="ID of the semester.")],
+    responses={200: ExperienceSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_semester_experiences(request, semester_id):
-    experiences = Experience.objects.filter(semester_id=semester_id)
+    user = request.user  # Get the current authenticated user
+
+    try:
+        semester = Semester.objects.get(id=semester_id)
+    except Semester.DoesNotExist:
+        return Response("Semester not found", status=status.HTTP_404_NOT_FOUND)
+
+    student = Student.objects.get(user=user)
+
+    # Filter experiences based on the user and semester
+    experiences = Experience.objects.filter(semester=semester, student=student)
     serializer = ExperienceSerializer(experiences, many=True)
-    return Response(serializer.data)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+#.........................................................................ALMANAC...................................
 
-
-
-# Almanac for all student of same graudation year
+## Almanac for all student of same graudation year
+@extend_schema(
+    description="Retrieve the almanac for all graduation year students. \
+        Note: response will be based on logged in user/Requesting user. i.e base on graduation year of the requesting user. \
+        Note(hint): in the response there is the user_id which can be used to get all experiences for particular student",
+    responses={200: AlmanacSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -244,8 +345,16 @@ def almanac_view(request):
 
     return Response(almanac_data)
 
+# ....................................................................................
 
 #Almanac for all student of same graduation of the same faculty
+@extend_schema(
+    description="Retrieve the almanac for faculty graduation year students.",
+    parameters=[
+        OpenApiParameter(name="faculty_id", type=int, description="ID of the faculty."),
+    ],
+    responses={200: AlmanacSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -269,7 +378,18 @@ def faculty_almanac_view(request):
     return Response(almanac_data_faculty)
 
 
+# .................................................................................
+
 #Almanac for all student of same graduation of the same department
+@extend_schema(
+    description="Retrieve the almanac for department graduation year students. \
+        Note result will be based on logged in user/Requesting user. i.e base on graduation year of the requesting user. \
+        Note(hint): in the response there is the user_id which can be used to get all experiences for particular student.",
+    parameters=[
+        OpenApiParameter(name="department_id", type=int, description="ID of the department."),
+    ],
+    responses={200: AlmanacSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -293,6 +413,8 @@ def department_almanac_view(request):
     return Response(almanac_data_department)
 
 
+#. ....................................................................................
+
 #Almanac for all student of same graduation of the same course
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -313,7 +435,10 @@ def course_almanac_view(request):
 
     return Response(almanac_data_course)
 
-########## faculty, department and course LIST ################
+#...............................................................................
+# ................. faculty, department and course LIST ........................
+#................................................................................
+
 class FacultyListView(ListAPIView):
     queryset = Faculty.objects.all()
     serializer_class = FacultySerializer
@@ -326,7 +451,15 @@ class CourseListView(ListAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
-################### Faculty, department and course for STUDENT ##############################
+# ...................................................................................
+
+# ...................................................................................................
+# ................. List of students in Faculty, department and course ..............................
+# ...................................................................................................
+@extend_schema(
+    description="Retrieve the list of all students.",
+    responses={200: StudentSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -335,7 +468,15 @@ def all_students(request):
     serializer = StudentSerializer(students, many=True)
     return Response(serializer.data, status=200)
 
+#,.....................................................................................
 
+@extend_schema(
+    description="Retrieve the list of students for a specific faculty.",
+    parameters=[
+        OpenApiParameter(name="faculty_id", type=int, description="ID of the faculty."),
+    ],
+    responses={200: StudentSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -348,8 +489,15 @@ def faculty_students(request, faculty_id):
     except Faculty.DoesNotExist:
         return Response("Faculty not found", status=404)
 
+# .........................................................................................
 
-
+@extend_schema(
+    description="Retrieve the list of students for a specific department.",
+    parameters=[
+        OpenApiParameter(name="department_id", type=int, description="ID of the department."),
+    ],
+    responses={200: StudentSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -362,8 +510,15 @@ def department_students(request, department_id):
     except Department.DoesNotExist:
         return Response("Department not found", status=404)
 
+#.........................................................................................
 
-
+@extend_schema(
+    description="Retrieve the list of students for a specific course.",
+    parameters=[
+        OpenApiParameter(name="course_id", type=int, description="ID of the course."),
+    ],
+    responses={200: StudentSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -376,8 +531,16 @@ def course_students(request, course_id):
     except Course.DoesNotExist:
         return Response("Course not found", status=404)
 
+# ............................................................................................
 
-
+@extend_schema(
+    description="Retrieve the list of students for a specific course and level.",
+    parameters=[
+        OpenApiParameter(name="course_id", type=int, description="ID of the course."),
+        OpenApiParameter(name="level", type=str, description="Level of the students."),
+    ],
+    responses={200: StudentSerializer(many=True), 404: "Not Found"},
+)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
