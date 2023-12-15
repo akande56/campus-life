@@ -304,7 +304,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Add your React app's domain
     # Add other allowed origins as needed
 ]
-
+CORS_ALLOW_CREDENTIALS = True
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
 SPECTACULAR_SETTINGS = {
