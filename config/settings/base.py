@@ -305,10 +305,22 @@ CORS_ALLOWED_ORIGINS = [
     # Add other allowed origins as needed
 ]
 CORS_ALLOW_CREDENTIALS = True
-
 CORS_ALLOW_HEADERS = [
-    'access-control-allow-origin',
+    'accept',
+    'accept-encoding',
     'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_EXPOSE_HEADERS = [
+    'access-control-allow-origin',
+    'content-length',
+    'content-type',
 ]
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
@@ -318,7 +330,15 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": [],
 }
-
+# Allow methods required for preflight requests
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 # Your stuff...
 # ------------------------------------------------------------------------------
 CSRF_COOKIE_SECURE = True  # Set to True if your site uses HTTPS
