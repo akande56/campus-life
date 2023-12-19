@@ -1,3 +1,5 @@
+from django.middleware import csrf
+from django.http import JsonResponse
 from rest_framework.decorators import api_view, authentication_classes,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -542,7 +544,7 @@ def course_students(request, course_id):
     responses={200: StudentSerializer(many=True), 404: "Not Found"},
 )
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
+@authentication_classes([TokenAuthentication])  
 @permission_classes([IsAuthenticated])
 def level_students(request, course_id ,level):
     try:
@@ -552,3 +554,9 @@ def level_students(request, course_id ,level):
         return Response(serializer.data, status=200)
     except Course.DoesNotExist:
         return Response("Course not found", status=404)
+
+
+
+def get_csrf_token(request):
+    token = csrf.get_token(request)
+    return JsonResponse({'csrf_token': token})

@@ -321,3 +321,5 @@ SPECTACULAR_SETTINGS = {
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+CSRF_COOKIE_SECURE = True  # Set to True if your site uses HTTPS
+CSRF_COOKIE_HTTPONLY = True
