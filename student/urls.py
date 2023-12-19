@@ -22,6 +22,7 @@ from .views import (
     DepartmentListView,
     CourseListView,
     get_csrf_token,
+    custom_obtain_auth_token,
 )
 
 
@@ -52,5 +53,6 @@ urlpatterns = [
     path('course/<int:course_id>/', course_students, name='course-students'),
     path('level/<int:course_id>/<str:level>/', level_students, name='level-students'),   
     path('get-csrf-token/', get_csrf_token, name='get-csrf-token'),
+    path("custom-auth-token/", custom_obtain_auth_token, name="custom-obtain-auth-token"),
 
 ]

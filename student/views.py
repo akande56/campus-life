@@ -1,3 +1,9 @@
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.contrib.auth import authenticate
+from django.middleware.csrf import get_token
+from rest_framework.authtoken.models import Token
+
 from django.middleware import csrf
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, authentication_classes,permission_classes
@@ -560,3 +566,37 @@ def level_students(request, course_id ,level):
 def get_csrf_token(request):
     token = csrf.get_token(request)
     return JsonResponse({'csrf_token': token})
+
+@csrf_exempt
+@require_POST
+def custom_obtain_auth_token(request):
+    # Your authentication logic here
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+
+    user = authenticate(request, username=username, password=password)
+
+    if user is not None:
+        # Authentication successful, generate a new CSRF token
+        csrf_token = get_token(request)
+
+        # Generate or retrieve the user's token
+        token, created = Token.objects.get_or_create(user=user)
+
+        # Access the token value
+        token_value = token.key
+
+        # Respond with the CSRF token and the actual authentication token
+        response_data = {'token': token_value, 'csrf_token': csrf_token}
+        response = JsonResponse(response_data)
+
+        # Set CORS headers
+        response['Access-Control-Allow-Origin'] = 'http://localhost:3000'  # Adjust with your React frontend URL
+        response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'accept, authorization, content-type'
+        response['Access-Control-Allow-Credentials'] = 'true'
+
+        return response
+    else:
+        # Authentication failed
+        return JsonResponse({'error': 'Invalid credentials'}, status=400)
