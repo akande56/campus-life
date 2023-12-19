@@ -133,7 +133,7 @@ LOGGING = {
 # -------------------------------------------------------------------------------
 # Tools that generate code samples can use SERVERS to point to the correct domain
 SPECTACULAR_SETTINGS["SERVERS"] = [  # noqa: F405
-    {"url": "https://campus_life.onrender.com", "description": "Production server"},
+    {"url": "https://campus-life-961c225b9b16.herokuapp.com/", "description": "Production server"},
 ]
 # Your stuff...
 # ------------------------------------------------------------------------------
