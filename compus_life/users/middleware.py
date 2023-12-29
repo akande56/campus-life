@@ -14,8 +14,8 @@ class CorsMiddleware:
         response = self.get_response(request)
 
         # Add CORS headers for all responses
-        response["Access-Control-Allow-Origin"] = "https://main-fanciful-puffpuff-a27986.netlify.app"  # Adjust with your React frontend URL
-        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response["Access-Control-Allow-Origin"] = "https://campuslife-dev.netlify.app"  # Adjust with your React frontend URL
+        response["Access-Control-Allow-Methods"] = "POST, DELETE, GET, PATCH, PUT, OPTIONS"
         response["Access-Control-Allow-Headers"] = "accept, authorization, content-type, x-csrftoken"
         response["Access-Control-Allow-Credentials"] = "true"
 

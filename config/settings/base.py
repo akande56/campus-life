@@ -302,7 +302,7 @@ REST_FRAMEWORK = {
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOWED_ORIGINS = [
-    "https://main-fanciful-puffpuff-a27986.netlify.app",  # Add your React app's domain
+    "https://campuslife-dev.netlify.app",  # Add your React app's domain
     # Add other allowed origins as needed
 ]
 CORS_ALLOW_CREDENTIALS = True
