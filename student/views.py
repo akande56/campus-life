@@ -48,7 +48,7 @@ from .serializers import (
     DepartmentSerializer,
     CourseSerializer,
 )
-from weasyprint import HTML
+
 
 
 @extend_schema(
