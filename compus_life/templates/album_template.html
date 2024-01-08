@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Album</title>
+</head>
+<body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .student {
+            width: 23%;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 2px;
+            text-align: center;
+        }
+
+        .student img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+
+
+
+<h1>ABUBAKAR TAFAWA BALEWA UNIVERSITY</h1>
+    <h2>STUDENT SESSION ALBUM</h2>
+
+    {% for experience in experiences %}
+        {% if forloop.counter0|divisibleby:4 %}
+            <div class="row">
+        {% endif %}
+        
+        <div class="student">
+            <img src="{{ experience.pic.url }}" alt="{{ experience.student.name }}">
+            <h2>{{ experience.student.first_name }}</h2>
+            <p>Phone: {{ experience.student.phone_number }}</p>
+            <!-- Add other experience information as needed -->
+        </div>
+
+        {% if forloop.last or forloop.counter0|divisibleby:4 %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</body>
+</html>

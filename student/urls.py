@@ -23,6 +23,7 @@ from .views import (
     CourseListView,
     get_csrf_token,
     custom_obtain_auth_token,
+    generate_album,
 )
 
 
@@ -54,5 +55,7 @@ urlpatterns = [
     path('level/<int:course_id>/<str:level>/', level_students, name='level-students'),   
     path('get-csrf-token/', get_csrf_token, name='get-csrf-token'),
     path("custom-auth-token/", custom_obtain_auth_token, name="custom-obtain-auth-token"),
+    # Generate PDF
+    path('generate-album/<int:semester_id>/<int:student_id>/', generate_album, name='generate_album'),
 
 ]

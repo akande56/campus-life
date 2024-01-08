@@ -5,7 +5,8 @@ from .models import (
     Faculty,
     Department,
     Semester,
-    Session
+    Session,
+    Experience,
 )
 
 admin.site.register(University)
@@ -14,3 +15,4 @@ admin.site.register(Faculty)
 admin.site.register(Department)
 admin.site.register(Semester)
 admin.site.register(Session)
+admin.site.register(Experience)

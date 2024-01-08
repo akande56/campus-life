@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate
@@ -5,7 +6,8 @@ from django.middleware.csrf import get_token
 from rest_framework.authtoken.models import Token
 
 from django.middleware import csrf
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from reportlab.pdfgen import canvas
 from rest_framework.decorators import api_view, authentication_classes,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -46,6 +48,8 @@ from .serializers import (
     DepartmentSerializer,
     CourseSerializer,
 )
+from weasyprint import HTML
+
 
 @extend_schema(
      description=" Note: Execution may lead to error when running here in the docs(Due to Swagger UI or ReDoc); everything is working when actual running with\
@@ -545,7 +549,7 @@ def course_students(request, course_id):
     description="Retrieve the list of students for a specific course and level.",
     parameters=[
         OpenApiParameter(name="course_id", type=int, description="ID of the course."),
-        OpenApiParameter(name="level", type=str, description="Level of the students."),
+        OpenApiParameter(name="current_level", type=str, description="Level of the students."),
     ],
     responses={200: StudentSerializer(many=True), 404: "Not Found"},
 )
@@ -600,3 +604,85 @@ def custom_obtain_auth_token(request):
     else:
         # Authentication failed
         return JsonResponse({'error': 'Invalid credentials'}, status=400)
+
+
+
+######################################## GENERATE PDF ##########################################
+@extend_schema(
+    description="Generate an album for a specific student in a given semester, returns pdf",
+    parameters=[
+        {
+            "name": "semester_id",
+            "in": "path",
+            "description": "ID of the semester",
+            "required": True,
+            "type": "integer",
+        },
+        {
+            "name": "student_id",
+            "in": "path",
+            "description": "ID of the student",
+            "required": True,
+            "type": "integer",
+        },
+    ],
+    responses={200: "application/pdf"},
+)
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication])  
+@permission_classes([AllowAny])
+def generate_album(request, semester_id, student_id):
+    # Get the student
+    student = get_object_or_404(Student, id=student_id)
+
+    # Determine course and level
+    course = student.course
+    level = student.current_level
+
+    # Get all students in the same course and level
+    students = Student.objects.filter(course=course, current_level=level)
+
+    # Get all experiences for the selected students in the given semester
+    experiences = Experience.objects.filter(student__in=students, semester=semester_id)
+
+    # Create PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'filename=student_album_{student.first_name}_{student.last_name}.pdf'
+
+    # Create the PDF object
+    pdf = canvas.Canvas(response)
+
+    # Add content to the PDF
+    pdf.drawString(100, 800, f"ABUBAKAR TAFAWA BALEWA UNIVERSITY - STUDENT SESSION ALBUM")
+    pdf.drawString(100, 780, f"Album for {student.first_name} {student.last_name} - Semester {semester_id}")
+
+    y_position = 700  # Starting Y position for content
+    x_position = 100  # Starting X position for content
+
+    for i, exp in enumerate(experiences):
+        # Add student name and phone number to the PDF
+        pdf.drawString(x_position, y_position - 60, f"Name: {exp.student.first_name} {exp.student.last_name}")
+        # pdf.drawString(x_position, y_position - 15, f"Phone: {exp.student.phone_number}")
+
+        # Add pictures to the PDF
+        if exp.semester_photo1:
+            image_path1 = exp.semester_photo1.path
+            pdf.drawInlineImage(image_path1, x_position, y_position - 40, width=80, height=80)
+
+        if exp.semester_photo2:
+            image_path2 = exp.semester_photo2.path
+            pdf.drawInlineImage(image_path2, x_position + 100, y_position - 40, width=80, height=80)
+
+        x_position += 250  # Adjust X position for the next student
+
+        # Move to the next row after two students
+        if (i + 1) % 2 == 0:
+            x_position = 100
+            y_position -= 180  # Adjust Y position for the next row
+
+        pdf.drawString(x_position, y_position - 160, "-" * 50)  # Separating line
+
+    # Save the PDF content
+    pdf.save()
+
+    return response
