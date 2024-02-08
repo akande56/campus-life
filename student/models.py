@@ -112,11 +112,11 @@ class Student(models.Model):
 class Experience(models.Model):
     """Model definition for Experience."""
 
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     experience = models.CharField(max_length=500)
     semester_photo1 = models.ImageField(upload_to='anual_semester_photo', null=True)
     semester_photo2 = models.ImageField(upload_to='anual_semester_photo', null=True)
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
 
 
     class Meta:

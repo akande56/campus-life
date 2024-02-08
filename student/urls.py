@@ -29,13 +29,13 @@ from .views import (
 
 urlpatterns = [
     #student
-    path('verify_and_create_user/', verify_and_create_user, name='verify_and_create_user'),
+    path('verify_and_create_user', verify_and_create_user, name='verify_and_create_user'),
     path('detail/<int:id>/', StudentDetailView.as_view(), name='student-detail'),
     path('update/<str:user_id>/', update_student, name = 'update_student'),
     #Session/semester/experience
     path('session_list/', sessions_list_view, name ='session_list'),
     path('semester_list/<int:session_id>/', semesters_list_view, name = 'semester_list'),
-    path('semester/<int:semester_id>/experiences/', semester_experience, name = 'new_experience'),
+    path('semester/experience', semester_experience, name = 'new_experience'),
     path('<str:user_id>/experiences/', get_student_experiences, name='get_student_experiences'),
     path('session/<int:session_id>/experiences/', get_session_experiences, name='get_session_experiences'),
     path('semester/<int:semester_id>/experiences/', get_semester_experiences, name='get_semester_experiences'),

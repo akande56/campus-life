@@ -24,7 +24,7 @@ urlpatterns += [
     path("api/v1/", include("config.api_router")), # for now only User model related
     path("api/v1/student/", include("student.urls")),
     # DRF auth token
-    path("auth-token/", obtain_auth_token),
+    path("auth-token", obtain_auth_token),
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(
         "api/docs/",

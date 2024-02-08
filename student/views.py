@@ -215,43 +215,41 @@ def semesters_list_view(request, session_id):
 
 #...................................................................
 
+
 @extend_schema(
-    description="Create a new experience for a specific semester and student. NOTE: dont forget to add multipart or form in the request",
-    parameters=[
-        {
-            "name": "semester_id",
-            "required": True,
-            "in": "path",
-            "description": "The ID of the semester for which the experience is created.",
-            "type": "integer",
-        }
-    ],
+    description="Create a new experience for the current semester and student. NOTE: don't forget to add multipart-form in the request",
     request=ExperienceSerializer,
     responses={201: ExperienceSerializer, 400: "Bad Request"},
 )
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def semester_experience(request, semester_id):
-    student_id = request.data.get('student')  # Get student ID from the request data
-    semester = Semester.objects.get(id=semester_id)  # Retrieve the Semester object
+def semester_experience(request):
+    print('view')
+    print(request.data)
+    # Fetching student data using the provided token
+    student = Student.objects.get(user=request.user)
 
-    # Check if the student already has an experience for this semester
-    existing_experience = Experience.objects.filter(student__id=student_id, semester=semester).first()
+    # Automatically determining the current semester (you need to implement this logic)
+    current_semester = Semester.objects.get(current_semester=True)
+
+    # Check if the student already has an experience for the current semester
+    existing_experience = Experience.objects.filter(student=student, semester=current_semester).first()
     if existing_experience:
         return Response("Student has already uploaded an experience for this semester.", status=status.HTTP_400_BAD_REQUEST)
 
-    serializer = ExperienceSerializer(data=request.data)
-
+    serializer = ExperienceSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
+        # Create the Experience object
         experience = serializer.save()
 
-        student = Student.objects.get(id=student_id)
+        # Set the related fields
         experience.student = student
-        experience.semester = semester
+        experience.semester = current_semester
         experience.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

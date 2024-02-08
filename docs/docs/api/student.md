@@ -130,7 +130,7 @@ http GET http://localhost:8000/api/v1/student/semester_list/1/ "Authorization: T
 ]
 
 ## 6. New Experience
-`Endpoint: api/v1/student/semester/<int:semester_id>/experiences/`
+`Endpoint: api/v1/student/semester/experience/`
 Method: POST
 Description: Create a new experience for a specific semester (student).
 Parameters:
@@ -138,16 +138,14 @@ semester_id (integer): ID of the semester.
 Token Header Required: Yes
 **NOTE: dont forget to add multipart or form in the request**
 **Request**
-http --form POST http://localhost:8000/api/v1/student/semester/1/experiences/ "Authorization: Token <your_token_here>" 
-Parameter: student="user_id_here" experience="Details for the experience" semester_photo1@/path/to/photo1.jpg semester_photo2@/path/to/photo2.jpg
+http --form POST http://localhost:8000/api/v1/student/semester/experience/ "Authorization: Token <your_token_here>" 
+Parameter:  experience="Details for the experience" semester_photo1@/path/to/photo1.jpg semester_photo2@/path/to/photo2.jpg
 **Response**
 {
     "id": 1,
-    "student": "user_id_here",
     "experience": "Details for the experience",
     "semester_photo1": "/media/anual_semester_photo/photo1.jpg",
     "semester_photo2": "/media/anual_semester_photo/photo2.jpg",
-    "semester": 1
 }
 
 

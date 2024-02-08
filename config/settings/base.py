@@ -305,6 +305,9 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOWED_ORIGINS = [
     "https://campuslife-dev.netlify.app",  # Add your React app's domain
     # Add other allowed origins as needed
+    "http://127.0.0.1:5174",
+    "http://localhost:5174",
+    
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
