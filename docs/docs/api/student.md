@@ -152,7 +152,7 @@ Parameter:  experience="Details for the experience" semester_photo1@/path/to/pho
 ## 7. Get Student Experiences
 `Endpoint: api/v1/student/semester/experiences/`
 Method: GET
-Description: Retrieve experiences for a specific student.
+Description: Retrieve experiences (current semester) for a specific student. require Authentication token header
 Parameters:
 user_id (string): User ID of the student.
 Token Header Required: Yes

@@ -256,7 +256,7 @@ def semester_experience(request):
 #.....................................................................
 
 @extend_schema(
-    description="Retrieve the list of experiences for a specific student. Include Authentication token header",
+    description="Retrieve the list of experiences (current semester) for a specific student. Include Authentication token header",
     
     responses={200: ExperienceSerializer(many=True), 404: "Not Found"},
 )
