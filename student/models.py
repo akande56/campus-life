@@ -45,7 +45,7 @@ class Semester(models.Model):
         verbose_name = 'Semester'
         verbose_name_plural = 'Semesters'
     def __str__(self):
-        return f"{self.title} ({self.session.title})"
+        return f"{self.session + self.title} ({self.session.title})"
 
 
 class Faculty(models.Model):

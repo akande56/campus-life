@@ -36,7 +36,7 @@ urlpatterns = [
     path('session_list/', sessions_list_view, name ='session_list'),
     path('semester_list/<int:session_id>/', semesters_list_view, name = 'semester_list'),
     path('semester/experience', semester_experience, name = 'new_experience'),
-    path('<str:user_id>/experiences/', get_student_experiences, name='get_student_experiences'),
+    path('semester/experiences/', get_student_experiences, name='get_student_experiences'),
     path('session/<int:session_id>/experiences/', get_session_experiences, name='get_session_experiences'),
     path('semester/<int:semester_id>/experiences/', get_semester_experiences, name='get_semester_experiences'),
     #almanac

@@ -256,15 +256,17 @@ def semester_experience(request):
 #.....................................................................
 
 @extend_schema(
-    description="Retrieve the list of experiences for a specific student.",
+    description="Retrieve the list of experiences for a specific student. Include Authentication token header",
     
     responses={200: ExperienceSerializer(many=True), 404: "Not Found"},
 )
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication])  # Exempting authentication for this view
-@permission_classes([AllowAny])  # Allowing any permission for this view
-def get_student_experiences(request, user_id):
-    experiences = Experience.objects.filter(student__user__id=user_id)  # Fetch experiences for the given user_id
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_student_experiences(request):
+    student = Student.objects.get(user=request.user)
+    semester = Semester.objects.get(current_semester=True)
+    experiences = Experience.objects.filter(student=student, semester=semester) 
     serializer = ExperienceSerializer(experiences, many=True)
     return Response(serializer.data)
 

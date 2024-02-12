@@ -37,7 +37,7 @@ class SemesterSerializer(serializers.ModelSerializer):
 class ExperienceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experience
-        fields = ['experience', 'semester_photo1', 'semester_photo2']
+        fields = ['experience', 'semester_photo1', 'semester_photo2', 'semester']
 
 class StudentSerializer(serializers.ModelSerializer):
     course = CourseSerializer()

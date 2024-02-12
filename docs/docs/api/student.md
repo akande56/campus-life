@@ -150,7 +150,7 @@ Parameter:  experience="Details for the experience" semester_photo1@/path/to/pho
 
 
 ## 7. Get Student Experiences
-`Endpoint: api/v1/student/<str:user_id>/experiences/`
+`Endpoint: api/v1/student/semester/experiences/`
 Method: GET
 Description: Retrieve experiences for a specific student.
 Parameters:
